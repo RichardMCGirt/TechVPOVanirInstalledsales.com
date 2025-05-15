@@ -211,14 +211,11 @@ function delayDisplay(milliseconds) {
     }
 }
 
-
-
 // Call this function on page load
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("DOM fully loaded, triggering record fetch...");
     await fetchAndDisplayRecords();
 });
-
 
 async function fetchTechniciansWithRecords() {
     let techniciansWithRecords = new Set();
@@ -400,9 +397,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
     
-
-
-
 // Fetch records for a selected technician
 async function fetchRecordsForTech(fieldTech) {
     try {
@@ -464,9 +458,6 @@ async function fetchRecordsForTech(fieldTech) {
     }
 }
 
-
-
-    
     // Function to display records with fade-in effect
     function displayRecordsWithFadeIn(records) {
         console.log('Displaying records...');
@@ -512,7 +503,6 @@ async function fetchRecordsForTech(fieldTech) {
         console.log(`Total number of entries displayed: ${records.length}`);
     }
 
-
     function sortRecordsWithSpecialCondition(records) {
         return records.sort((a, b) => {
             const idA = a.fields['ID Number'] || ''; // Fetch the ID Number field from record A
@@ -543,18 +533,19 @@ async function fetchRecordsForTech(fieldTech) {
         const checkboxValue = fieldTechConfirmedComplete ? 'checked' : '';
         const descriptionOfWork = record.fields['Description of Work'];
         recordRow.innerHTML = `
-            <td>${IDNumber}</td>
-            <td>${vanirOffice}</td>
-            <td>${jobName}</td>
-            <td>${descriptionOfWork}</td>
-            <td>${fieldTechnician}</td>
-            <td>
-                <label class="custom-checkbox">
-                    <input type="checkbox" ${checkboxValue} data-record-id="${record.id}" data-initial-checked="${checkboxValue}">
-                    <span class="checkmark"></span>
-                </label>
-            </td>
-        `;
+        <td data-label="ID Number">${IDNumber}</td>
+        <td data-label="Branch">${vanirOffice}</td>
+        <td data-label="Job Name">${jobName}</td>
+        <td data-label="Description of Work">${descriptionOfWork}</td>
+        <td data-label="Field Technician">${fieldTechnician}</td>
+        <td data-label="Completed">
+            <label class="custom-checkbox">
+                <input type="checkbox" ${checkboxValue} data-record-id="${record.id}" data-initial-checked="${checkboxValue}">
+                <span class="checkmark"></span>
+            </label>
+        </td>
+    `;
+    
 
         const checkbox = recordRow.querySelector('input[type="checkbox"]');
         checkbox.addEventListener('click', handleCheckboxClick);
@@ -624,34 +615,39 @@ techDropdown.addEventListener('change', () => {
         hideFieldTechnicianColumnIfMatches();
     });
     
-    
-    
-    
     // Call the function when the dropdown changes
     let currentCheckbox = null; // Declare at a higher scope
     let currentRecordId = null;  // Declare at a higher scope
     
     // Function to handle checkbox click event
     function handleCheckboxClick(event) {
-        currentCheckbox = event.target;  // Assign current checkbox globally
+        currentCheckbox = event.target;
         currentRecordId = currentCheckbox.getAttribute('data-record-id');
         const isChecked = currentCheckbox.checked;
         const initialChecked = currentCheckbox.getAttribute('data-initial-checked') === 'true';
     
         if (!isChecked) {
-            // Checkbox was unchecked: immediately submit the update without showing the modal
+            // If unchecked, submit immediately
             console.log('Checkbox unchecked, submitting update immediately...');
-            submitUpdate(currentRecordId, false); // Uncheck action, no modal
-            modal.style.display = 'none'; // Hide the modal when unchecked
+            submitUpdate(currentRecordId, false);
+            modal.style.display = 'none';
         } else if (!initialChecked && isChecked) {
-            // Checkbox was initially unchecked and is now checked: Show the modal for confirmation
+            // Show modal before confirming update
             console.log('Checkbox checked, showing modal for confirmation...');
-            modal.style.display = 'block'; // Show the modal when checked
+            
+            const row = currentCheckbox.closest('tr');
+            const jobNameCell = row.querySelector('td:nth-child(3)');
+            const jobName = jobNameCell ? jobNameCell.textContent.trim() : 'N/A';
+    
+            document.getElementById('modalJobName').textContent = jobName;
+    
+            modal.style.display = 'block';
         }
     
-        // Update the checkbox's 'data-initial-checked' attribute to its current state after interaction
+        // Always update the data-initial-checked state
         currentCheckbox.setAttribute('data-initial-checked', isChecked);
     }
+    
     
     // Event listeners for modal buttons
     yesButton.addEventListener('click', () => {
@@ -680,6 +676,7 @@ techDropdown.addEventListener('change', () => {
             });
     
             if (isChecked) {
+                
                 // Only show alert if the job is confirmed complete (checked)
                 console.log(`Record ID ${recordId} marked as complete.`);
                 alert(`Record ID ${recordId} updated successfully.`);
@@ -717,7 +714,6 @@ techDropdown.addEventListener('change', () => {
         }
     }
     
-
      // Handle dropdown change event
      techDropdown.addEventListener('change', () => {
         const selectedTech = techDropdown.value;

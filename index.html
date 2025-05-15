@@ -15,7 +15,7 @@
     
     <div id="spinner" class="spinner" style="display:none;"></div>
 
-    <h3 id="searchBarTitle" class="hidden underline">Open VPOs Awaiting Field Tech</h3>
+    <h1 id="searchBarTitle" class="hidden underline">Open VPOs</h1>
     <div>
         <input type="text" id="searchBar" class="hidden"  placeholder="Search">
 
@@ -25,10 +25,6 @@
     <select id="techDropdown">
         <option value="all">Display All</option>
     </select>
-    
-    
-    
-
     
     <!-- Table is wrapped in a scrollable div -->
     <div class="table-container">
@@ -46,13 +42,12 @@
 
     <div id="modal">
         <p>Are you sure you want to confirm the job is complete?</p>
+        <p><strong>Job Name:</strong> <span id="modalJobName"></span></p>
         <button id="yesButton">Yes</button>
         <button id="noButton">No</button>
     </div>
     
     
-      
-
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="FieldTechVPO.js"></script>
 </body>
